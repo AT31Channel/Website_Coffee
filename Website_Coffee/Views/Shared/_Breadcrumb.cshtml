@@ -1,0 +1,21 @@
+@{
+    var controller = ViewContext.RouteData.Values["controller"].ToString();
+    var action = ViewContext.RouteData.Values["action"].ToString();
+    var isHome = controller == "Home" && action == "Index";
+    var isLogin = controller == "Account" && (action == "Login" || action == "Register");
+}
+
+@if (!isHome && !isLogin)
+{
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            @if (User.IsInRole("Admin"))
+            {
+                <li class="breadcrumb-item">
+                    <a asp-controller="Admin" asp-action="Index">Dashboard</a>
+                </li>
+            }
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+}

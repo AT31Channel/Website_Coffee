@@ -1,0 +1,38 @@
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<style>
+    .alert {
+        margin-bottom: 1rem;
+        border: none;
+    }
+
+    .alert-success {
+        background-color: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #842029;
+    }
+
+    .btn-close {
+        padding: 1.05rem 1rem;
+    }
+</style>

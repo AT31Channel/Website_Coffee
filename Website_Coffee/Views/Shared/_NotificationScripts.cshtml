@@ -1,0 +1,41 @@
+@if (TempData["Success"] != null)
+{
+    <script>
+        $(document).ready(function () {
+            showNotification('@TempData["Success"]', 'success');
+        });
+    </script>
+}
+
+@if (TempData["Error"] != null)
+{
+    <script>
+        $(document).ready(function () {
+            showNotification('@TempData["Error"]', 'danger');
+        });
+    </script>
+}
+
+<script>
+    function showNotification(message, type) {
+        const alertHtml = `
+            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                ${type === 'success' 
+                    ? '<i class="bi bi-check-circle-fill me-2"></i>' 
+                    : '<i class="bi bi-exclamation-triangle-fill me-2"></i>'}
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>`;
+
+        // Insert alert before main content
+        const alertContainer = $('<div>').addClass('container mt-3').html(alertHtml);
+        $('main').before(alertContainer);
+
+        // Auto hide after 5 seconds
+        setTimeout(function () {
+            alertContainer.fadeOut('slow', function () {
+                $(this).remove();
+            });
+        }, 5000);
+    }
+</script>

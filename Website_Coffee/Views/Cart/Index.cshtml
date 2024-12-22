@@ -1,0 +1,148 @@
+@model Website_Coffee.ViewModels.CartViewModel
+
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">@ViewData["Title"]</h2>
+
+    @if (!Model.CartItems.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-cart-x"></i> Giỏ hàng của bạn đang trống.
+            <a asp-controller="Home" asp-action="Index" class="alert-link">Tiếp tục mua sắm</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Giá</th>
+                        <th>Số lượng</th>
+                        <th>Tổng</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.CartItems)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    @if (!string.IsNullOrEmpty(item.Product.ImageUrl))
+                                    {
+                                        <img src="@item.Product.ImageUrl" alt="@item.Product.Name" class="img-thumbnail me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                    }
+                                    <span>@item.Product.Name</span>
+                                </div>
+                            </td>
+                            <td>@item.Product.Price.ToString("C0")</td>
+                            <td style="width: 150px;">
+                                <form asp-action="Update" method="post" class="d-flex align-items-center">
+                                    <input type="hidden" name="productId" value="@item.ProductId">
+                                    <input type="number" name="quantity" value="@item.Quantity" min="1"
+                                           class="form-control form-control-sm me-2" style="width: 70px;"
+                                           onchange="this.form.submit()">
+                                </form>
+                            </td>
+                            <td>@((item.Product.Price * item.Quantity).ToString("C0"))</td>
+                            <td>
+                                <form asp-action="Remove" method="post" style="display: inline;">
+                                    <input type="hidden" name="productId" value="@item.ProductId">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-end"><strong>Tổng cộng:</strong></td>
+                        <td><strong>@Model.Total.ToString("C0")</strong></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Tiếp tục mua sắm
+            </a>
+            <form asp-action="Checkout" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-bag-check"></i> Thanh toán
+                </button>
+            </form>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Tự động submit form khi thay đổi số lượng
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('change', function() {
+                this.form.submit();
+            });
+        });
+    </script>
+}
+
+<style>
+    .table th {
+        background-color: #FFF8E7;
+        color: #4A2C2A;
+    }
+
+    .btn-outline-danger {
+        border-color: #dc3545;
+        color: #dc3545;
+    }
+
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-outline-secondary {
+        border-color: #4A2C2A;
+        color: #4A2C2A;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #4A2C2A;
+        color: white;
+    }
+
+    .btn-primary {
+        background-color: #FFA500;
+        border-color: #FFA500;
+    }
+
+    .btn-primary:hover {
+        background-color: #FF8C00;
+        border-color: #FF8C00;
+    }
+
+    .alert-info {
+        background-color: #FFF8E7;
+        border-color: #FFA500;
+        color: #4A2C2A;
+    }
+
+    .alert-info .alert-link {
+        color: #FFA500;
+    }
+
+    .form-control:focus {
+        border-color: #FFA500;
+        box-shadow: 0 0 0 0.2rem rgba(255, 165, 0, 0.25);
+    }
+</style>

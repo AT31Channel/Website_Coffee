@@ -1,0 +1,113 @@
+@model Website_Coffee.Models.Order
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div class="container">
+    <h1 class="mb-4">
+        <i class="bi bi-info-circle"></i> Order Details #@Model.Id
+    </h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-person"></i> Customer Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Email:</strong> @Model.User.Email</p>
+                    <p><strong>Name:</strong> @Model.User.FullName</p>
+                    <p><strong>Phone:</strong> @Model.User.PhoneNumber</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-info-circle"></i> Order Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Order Date:</strong> @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+                    <p><strong>Status:</strong>
+                        @switch (Model.Status)
+                        {
+                            case OrderStatus.Pending:
+                                <span class="badge bg-warning">Chờ xác nhận</span>
+                                break;
+                            case OrderStatus.Confirmed:
+                                <span class="badge bg-info">Đã xác nhận</span>
+                                break;
+                            case OrderStatus.Shipping:
+                                <span class="badge bg-primary">Đang giao</span>
+                                break;
+                            case OrderStatus.Delivered:
+                                <span class="badge bg-success">Đã giao</span>
+                                break;
+                            case OrderStatus.Cancelled:
+                                <span class="badge bg-danger">Đã hủy</span>
+                                break;
+                        }
+                    </p>
+                    <p><strong>Total Amount:</strong> @Model.TotalAmount.ToString("C")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-cart3"></i> Order Items
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderDetails)
+                        {
+                            <tr>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Product.ImageUrl))
+                                    {
+                                        <img src="@item.Product.ImageUrl" alt="@item.Product.Name" style="max-width: 50px;" class="me-2" />
+                                    }
+                                    @item.Product.Name
+                                </td>
+                                <td>@item.UnitPrice.ToString("C")</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.TotalPrice.ToString("C")</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                            <td><strong>@Model.TotalAmount.ToString("C")</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>

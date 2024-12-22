@@ -1,0 +1,181 @@
+/* Base styles */
+html {
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+/* Navbar styles */
+.navbar {
+    background-color: #FFF8E7 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Logo styles */
+.navbar-brand {
+    font-size: 2.5rem !important;
+    font-weight: 800;
+    color: #FFA500 !important;
+    text-decoration: none;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+    margin-right: 2rem;
+}
+
+    .navbar-brand i {
+        color: #4A2C2A;
+        margin-right: 0.5rem;
+        font-size: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .navbar-brand::after {
+        content: "Coffee";
+        color: #4A2C2A;
+        margin-left: 5px;
+    }
+
+    /* Logo hover effects */
+    .navbar-brand:hover {
+        transform: scale(1.05);
+    }
+
+        .navbar-brand:hover i {
+            transform: rotate(15deg);
+        }
+
+/* Navigation items */
+.nav-link {
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    transition: all 0.3s ease;
+    color: #4A2C2A !important;
+}
+
+    .nav-link:hover {
+        transform: translateY(-2px);
+        color: #FFA500 !important;
+    }
+
+    .nav-link i {
+        margin-right: 0.5rem;
+        font-size: 1.2rem;
+    }
+
+/* Login message */
+.login-message {
+    font-style: italic;
+    color: #666;
+}
+
+    .login-message i {
+        color: #FFA500;
+    }
+
+/* Breadcrumb styles */
+.breadcrumb {
+    background-color: transparent;
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.breadcrumb-item a {
+    color: #4A2C2A;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+    .breadcrumb-item a:hover {
+        color: #FFA500;
+        text-decoration: none;
+    }
+
+.breadcrumb-item.active {
+    color: #666;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    color: #4A2C2A;
+}
+
+/* Admin dropdown styles */
+.admin-dropdown {
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    padding: 0.5rem 0;
+    min-width: 200px;
+}
+
+.admin-dropdown .dropdown-item {
+    padding: 0.5rem 1rem;
+    color: #4A2C2A;
+    transition: all 0.3s ease;
+}
+
+.admin-dropdown .dropdown-item i {
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.admin-dropdown .dropdown-item:hover {
+    background-color: #FFF8E7;
+    color: #FFA500;
+    transform: translateX(5px);
+}
+
+.admin-dropdown .dropdown-item:active {
+    background-color: #FFA500;
+    color: white;
+}
+
+/* Admin nav link */
+.nav-item.dropdown > .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-item.dropdown > .nav-link i {
+    font-size: 1.2rem;
+}
+
+.nav-item.dropdown > .nav-link:hover i {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+
+/* Footer styles */
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
+    background-color: #FFF8E7;
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+    .footer a {
+        color: #4A2C2A;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+        .footer a:hover {
+            color: #FFA500;
+            text-decoration: none;
+        }

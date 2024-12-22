@@ -1,0 +1,74 @@
+@model Website_Coffee.Models.Product
+
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<div class="container">
+    <h1 class="mb-4">
+        <i class="bi bi-pencil"></i> Edit Product
+    </h1>
+
+    <div class="row">
+        <div class="col-md-8">
+            <form asp-action="Edit" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="ImageUrl" />
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Price" class="form-label"></label>
+                    <input asp-for="Price" class="form-control" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CategoryId" class="form-label">Category</label>
+                    <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories"></select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Current Image</label>
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <div>
+                            <img src="@Model.ImageUrl" alt="@Model.Name" style="max-width: 200px;" class="mb-2" />
+                        </div>
+                    }
+                    <input type="file" class="form-control" name="imageFile" accept="image/*" />
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input asp-for="IsAvailable" class="form-check-input" />
+                    <label asp-for="IsAvailable" class="form-check-label"></label>
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Save
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

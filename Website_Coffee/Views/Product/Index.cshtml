@@ -1,0 +1,64 @@
+@model IEnumerable<Website_Coffee.Models.Product>
+
+@{
+    ViewData["Title"] = "Quản lý sản phẩm";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>@ViewData["Title"]</h2>
+        <a asp-action="Create" class="btn btn-primary">Thêm sản phẩm mới</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Name)</th>
+                    <th>@Html.DisplayNameFor(model => model.Description)</th>
+                    <th>@Html.DisplayNameFor(model => model.Price)</th>
+                    <th>@Html.DisplayNameFor(model => model.Category)</th>
+                    <th>@Html.DisplayNameFor(model => model.IsAvailable)</th>
+                    <th>Hình ảnh</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Description</td>
+                        <td>@item.Price.ToString("N0") đ</td>
+                        <td>@item.Category.Name</td>
+                        <td>
+                            @if (item.IsAvailable)
+                            {
+                                <span class="badge bg-success">Còn hàng</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Hết hàng</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <img src="~/images/products/@item.ImageUrl" alt="@item.Name" style="max-width: 50px;" />
+                            }
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
+                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" 
+                                      onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
+                                    <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

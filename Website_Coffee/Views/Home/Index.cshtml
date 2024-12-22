@@ -1,0 +1,200 @@
+@model Website_Coffee.ViewModels.HomeViewModel
+
+@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+<style>
+    .product-card {
+        height: 100%;
+        transition: transform 0.2s;
+        border: none;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .product-image {
+        height: 280px;
+        object-fit: cover;
+        width: 100%;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+
+    .product-info {
+        padding: 1.2rem;
+    }
+
+    .product-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+        min-height: 1.5em;
+        text-align: center;
+    }
+
+    .product-category {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        text-align: center;
+        margin-bottom: 1rem;
+        font-weight: 500;
+    }
+
+    .product-price-container {
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .product-price {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #e67e22;
+    }
+
+    .price-currency {
+        font-size: 0.9rem;
+        color: #e67e22;
+        margin-left: 2px;
+    }
+
+    .add-to-cart-btn {
+        width: 100%;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .search-section {
+        background-color: #f8f9fa;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 8px;
+    }
+
+    .search-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+</style>
+
+<div class="container mt-4">
+    <!-- Search and Filter Section -->
+    <div class="search-section">
+        <div class="search-container">
+            <form method="get" class="form-inline">
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <input type="text" name="searchString" class="form-control" 
+                               placeholder="Tìm kiếm sản phẩm..." value="@Model.SearchString">
+                    </div>
+                    <div class="col-md-5">
+                        <select name="categoryId" class="form-select">
+                            <option value="">Tất cả danh mục</option>
+                            @foreach (var category in Model.Categories)
+                            {
+                                <option value="@category.Id" selected="@(Model.CategoryId == category.Id)">
+                                    @category.Name
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i> Tìm
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var product in Model.Products)
+        {
+            <div class="col">
+                <div class="product-card">
+                    @if (!string.IsNullOrEmpty(product.ImageUrl))
+                    {
+                        <img src="~/images/products/@System.IO.Path.GetFileName(product.ImageUrl)" class="product-image" alt="@product.Name">
+                    }
+                    else
+                    {
+                        <img src="~/images/no-image.png" class="product-image" alt="No Image">
+                    }
+                    <div class="product-info">
+                        <h5 class="product-title">@product.Name</h5>
+                        <p class="product-category">@product.Category.Name</p>
+                        <div class="product-price-container">
+                            <span class="product-price">@product.Price.ToString("N0")</span>
+                            <span class="price-currency">đ</span>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+                            {
+                                <form asp-controller="Cart" asp-action="Add" method="post" onsubmit="return addToCart(this);">
+                                    <input type="hidden" name="productId" value="@product.Id" />
+                                    <input type="hidden" name="quantity" value="1" />
+                                    <button type="submit" class="btn btn-primary add-to-cart-btn">
+                                        <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                    </button>
+                                </form>
+                            }
+                            else if (!User.Identity.IsAuthenticated)
+                            {
+                                <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Index", "Home")" class="btn btn-outline-primary add-to-cart-btn">
+                                    <i class="bi bi-box-arrow-in-right"></i> Đăng nhập để mua
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Products.Any())
+    {
+        <div class="text-center my-5">
+            <h3>Không tìm thấy sản phẩm nào</h3>
+            <p>Vui lòng thử tìm kiếm với từ khóa khác hoặc xem tất cả sản phẩm</p>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function addToCart(form) {
+            $(form).find('button[type="submit"]').prop('disabled', true);
+            $.ajax({
+                url: form.action,
+                method: form.method,
+                data: $(form).serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        // Cập nhật số lượng trong giỏ hàng
+                        $('#cartItemCount').text(response.totalItems);
+                        // Hiển thị thông báo thành công
+                        alert(response.message);
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert('Có lỗi xảy ra. Vui lòng thử lại sau.');
+                },
+                complete: function () {
+                    $(form).find('button[type="submit"]').prop('disabled', false);
+                }
+            });
+            return false;
+        }
+    </script>
+}

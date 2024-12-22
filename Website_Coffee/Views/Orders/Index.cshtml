@@ -1,0 +1,97 @@
+@model IEnumerable<Website_Coffee.Models.Order>
+
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<div class="container">
+    <h1 class="mb-4">
+        <i class="bi bi-cart-check-fill"></i> Orders
+    </h1>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Order Date</th>
+                    <th>Total Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>#@item.Id</td>
+                        <td>@item.User.Email</td>
+                        <td>@item.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@item.TotalAmount.ToString("C")</td>
+                        <td>
+                            @switch (item.Status)
+                            {
+                                case OrderStatus.Pending:
+                                    <span class="badge bg-warning">Chờ xác nhận</span>
+                                    break;
+                                case OrderStatus.Confirmed:
+                                    <span class="badge bg-info">Đã xác nhận</span>
+                                    break;
+                                case OrderStatus.Shipping:
+                                    <span class="badge bg-primary">Đang giao</span>
+                                    break;
+                                case OrderStatus.Delivered:
+                                    <span class="badge bg-success">Đã giao</span>
+                                    break;
+                                case OrderStatus.Cancelled:
+                                    <span class="badge bg-danger">Đã hủy</span>
+                                    break;
+                            }
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">
+                                    <i class="bi bi-info-circle"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown">
+                                    <i class="bi bi-gear"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <form asp-action="UpdateStatus" method="post">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <input type="hidden" name="status" value="@OrderStatus.Confirmed" />
+                                            <button type="submit" class="dropdown-item">Xác nhận đơn hàng</button>
+                                        </form>
+                                    </li>
+                                    <li>
+                                        <form asp-action="UpdateStatus" method="post">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <input type="hidden" name="status" value="@OrderStatus.Shipping" />
+                                            <button type="submit" class="dropdown-item">Bắt đầu giao hàng</button>
+                                        </form>
+                                    </li>
+                                    <li>
+                                        <form asp-action="UpdateStatus" method="post">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <input type="hidden" name="status" value="@OrderStatus.Delivered" />
+                                            <button type="submit" class="dropdown-item">Đã giao hàng</button>
+                                        </form>
+                                    </li>
+                                    <li>
+                                        <form asp-action="UpdateStatus" method="post">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <input type="hidden" name="status" value="@OrderStatus.Cancelled" />
+                                            <button type="submit" class="dropdown-item">Hủy đơn hàng</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

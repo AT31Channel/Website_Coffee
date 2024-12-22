@@ -1,0 +1,144 @@
+@model Website_Coffee.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Quản lý hệ thống";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="bi bi-speedometer2"></i> Bảng điều khiển</h2>
+
+    <!-- Thống kê -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Tổng người dùng</h6>
+                            <h2 class="mb-0">@Model.TotalUsers</h2>
+                        </div>
+                        <i class="bi bi-people-fill fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Tổng sản phẩm</h6>
+                            <h2 class="mb-0">@Model.TotalProducts</h2>
+                        </div>
+                        <i class="bi bi-cup-hot-fill fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Tổng đơn hàng</h6>
+                            <h2 class="mb-0">@Model.TotalOrders</h2>
+                        </div>
+                        <i class="bi bi-cart-check-fill fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu quản lý -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="bi bi-people-fill fs-1 text-primary mb-3"></i>
+                    <h5 class="card-title">Quản lý người dùng</h5>
+                    <p class="card-text">Thêm, sửa, xóa và phân quyền người dùng</p>
+                    <a asp-controller="Admin" asp-action="UserManagement" class="btn btn-primary">
+                        <i class="bi bi-person-gear"></i> Quản lý
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="bi bi-cup-hot-fill fs-1 text-success mb-3"></i>
+                    <h5 class="card-title">Quản lý sản phẩm</h5>
+                    <p class="card-text">Thêm, sửa, xóa sản phẩm và danh mục</p>
+                    <a asp-controller="Product" asp-action="Index" class="btn btn-success">
+                        <i class="bi bi-box-seam"></i> Quản lý
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="bi bi-cart-check-fill fs-1 text-info mb-3"></i>
+                    <h5 class="card-title">Quản lý đơn hàng</h5>
+                    <p class="card-text">Xem và cập nhật trạng thái đơn hàng</p>
+                    <a asp-controller="Admin" asp-action="OrderManagement" class="btn btn-info">
+                        <i class="bi bi-clipboard-check"></i> Quản lý
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Đơn hàng gần đây -->
+    <div class="card">
+        <div class="card-header bg-white">
+            <h5 class="mb-0"><i class="bi bi-clock-history"></i> Đơn hàng gần đây</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th><i class="bi bi-hash"></i> Mã đơn</th>
+                            <th><i class="bi bi-person"></i> Khách hàng</th>
+                            <th><i class="bi bi-calendar2"></i> Ngày đặt</th>
+                            <th><i class="bi bi-currency-dollar"></i> Tổng tiền</th>
+                            <th><i class="bi bi-check-circle"></i> Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.RecentOrders)
+                        {
+                            <tr>
+                                <td>#@order.Id</td>
+                                <td>@order.User.FullName</td>
+                                <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@order.TotalAmount.ToString("N0") đ</td>
+                                <td>
+                                    @switch (order.Status)
+                                    {
+                                        case OrderStatus.Pending:
+                                            <span class="badge bg-warning"><i class="bi bi-hourglass"></i> Chờ xác nhận</span>
+                                            break;
+                                        case OrderStatus.Confirmed:
+                                            <span class="badge bg-info"><i class="bi bi-check2-circle"></i> Đã xác nhận</span>
+                                            break;
+                                        case OrderStatus.Shipping:
+                                            <span class="badge bg-primary"><i class="bi bi-truck"></i> Đang giao</span>
+                                            break;
+                                        case OrderStatus.Delivered:
+                                            <span class="badge bg-success"><i class="bi bi-check2-all"></i> Đã giao</span>
+                                            break;
+                                        case OrderStatus.Cancelled:
+                                            <span class="badge bg-danger"><i class="bi bi-x-circle"></i> Đã hủy</span>
+                                            break;
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

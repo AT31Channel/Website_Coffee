@@ -1,0 +1,173 @@
+@model Website_Coffee.ViewModels.OrderManagementViewModel
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-cart-check-fill"></i> Quản lý đơn hàng</h2>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Tổng đơn hàng</h6>
+                            <h2 class="mt-2 mb-0">@Model.TotalOrders</h2>
+                        </div>
+                        <i class="bi bi-cart4 fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Chờ xác nhận</h6>
+                            <h2 class="mt-2 mb-0">@Model.PendingOrders</h2>
+                        </div>
+                        <i class="bi bi-hourglass-split fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Đang xử lý</h6>
+                            <h2 class="mt-2 mb-0">@Model.ProcessingOrders</h2>
+                        </div>
+                        <i class="bi bi-gear fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Hoàn thành</h6>
+                            <h2 class="mt-2 mb-0">@Model.CompletedOrders</h2>
+                        </div>
+                        <i class="bi bi-check-circle fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Khách hàng</th>
+                            <th>Ngày đặt</th>
+                            <th>Địa chỉ</th>
+                            <th>Số điện thoại</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.Orders)
+                        {
+                            <tr>
+                                <td>#@order.Id</td>
+                                <td>@order.User.Email</td>
+                                <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@order.ShippingAddress</td>
+                                <td>@order.PhoneNumber</td>
+                                <td>@order.TotalAmount.ToString("C0")</td>
+                                <td>
+                                    @switch (order.Status)
+                                    {
+                                        case OrderStatus.Pending:
+                                            <span class="badge bg-warning">Chờ xác nhận</span>
+                                            break;
+                                        case OrderStatus.Confirmed:
+                                            <span class="badge bg-info">Đã xác nhận</span>
+                                            break;
+                                        case OrderStatus.Shipping:
+                                            <span class="badge bg-primary">Đang giao</span>
+                                            break;
+                                        case OrderStatus.Delivered:
+                                            <span class="badge bg-success">Đã giao</span>
+                                            break;
+                                        case OrderStatus.Cancelled:
+                                            <span class="badge bg-danger">Đã hủy</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@order.Id" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> Chi tiết
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+
+    .badge {
+        padding: 0.5em 0.75em;
+    }
+
+    .btn i {
+        margin-right: 0.5rem;
+    }
+
+    .alert {
+        margin-bottom: 1.5rem;
+    }
+
+    .alert i {
+        margin-right: 0.5rem;
+    }
+
+    .bi {
+        line-height: 1;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Auto-hide alerts after 5 seconds
+        $(document).ready(function () {
+            setTimeout(function () {
+                $('.alert').fadeOut('slow');
+            }, 5000);
+        });
+    </script>
+}

@@ -1,0 +1,59 @@
+@if (TempData["Success"] != null)
+{
+    <div class="notification-toast" id="notification">
+        <div class="toast show" role="alert">
+            <div class="toast-header">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                <strong class="me-auto">Thông báo</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body">
+                @TempData["Success"]
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .notification-toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+    }
+
+    .toast {
+        background-color: #fff;
+        border-left: 4px solid #28a745;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    .toast-header {
+        background-color: #fff;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .toast-header .btn-close {
+        font-size: 0.875rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .toast-body {
+        padding: 0.75rem;
+        color: #4A2C2A;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var toast = document.getElementById('notification');
+        if (toast) {
+            setTimeout(function() {
+                var bsToast = bootstrap.Toast.getInstance(toast.querySelector('.toast'));
+                if (bsToast) {
+                    bsToast.hide();
+                }
+            }, 3000);
+        }
+    });
+</script>

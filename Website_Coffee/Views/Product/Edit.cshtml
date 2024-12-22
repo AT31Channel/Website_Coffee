@@ -1,0 +1,78 @@
+@model Website_Coffee.ViewModels.ProductViewModel
+
+@{
+    ViewData["Title"] = "Chỉnh sửa sản phẩm";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">@ViewData["Title"]</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="ExistingImagePath" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Name" class="control-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Description" class="control-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Price" class="control-label"></label>
+                            <input asp-for="Price" class="form-control" />
+                            <span asp-validation-for="Price" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="CategoryId" class="control-label"></label>
+                            <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories">
+                                <option value="">-- Chọn danh mục --</option>
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="ImageFile" class="control-label"></label>
+                            <input asp-for="ImageFile" class="form-control" type="file" accept="image/*" />
+                            <span asp-validation-for="ImageFile" class="text-danger"></span>
+                            @if (!string.IsNullOrEmpty(Model.ExistingImagePath))
+                            {
+                                <div class="mt-2">
+                                    <img src="~/images/products/@Model.ExistingImagePath" alt="Current Image" style="max-width: 200px;" />
+                                </div>
+                            }
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <div class="form-check">
+                                <input asp-for="IsAvailable" class="form-check-input" />
+                                <label asp-for="IsAvailable" class="form-check-label"></label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

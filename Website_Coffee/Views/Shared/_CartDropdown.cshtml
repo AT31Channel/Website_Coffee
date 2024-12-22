@@ -1,0 +1,67 @@
+@using Website_Coffee.Models
+@inject Website_Coffee.Data.ApplicationDbContext Context
+
+@{
+    var userId = User.Identity?.Name;
+    var cart = await Context.Carts
+        .Include(c => c.CartItems)
+        .ThenInclude(ci => ci.Product)
+        .FirstOrDefaultAsync(c => c.UserId == userId);
+    var cartItems = cart?.CartItems.ToList() ?? new List<CartItem>();
+    var total = cartItems.Sum(item => item.Quantity * item.Product.Price);
+}
+
+<div class="dropdown">
+    <button class="btn btn-outline-primary position-relative" type="button" id="cartDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-cart3"></i>
+        @if (cartItems.Any())
+        {
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                @cartItems.Sum(i => i.Quantity)
+            </span>
+        }
+    </button>
+    <div class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="cartDropdown" style="min-width: 300px;">
+        @if (cartItems.Any())
+        {
+            <div class="cart-items">
+                @foreach (var item in cartItems)
+                {
+                    <div class="cart-item d-flex align-items-center mb-2">
+                        <img src="~/images/products/@item.Product.ImageUrl" alt="@item.Product.Name" style="width: 50px; height: 50px; object-fit: cover;" class="me-2">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">@item.Product.Name</h6>
+                            <small class="text-muted">@item.Quantity x @item.Product.Price.ToString("N0")đ</small>
+                        </div>
+                        <form asp-controller="Cart" asp-action="Remove" method="post" class="d-inline">
+                            <input type="hidden" name="productId" value="@item.ProductId">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                }
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong>Tổng cộng:</strong>
+                <span class="text-primary fw-bold">@total.ToString("N0")đ</span>
+            </div>
+            <div class="d-grid gap-2">
+                <a asp-controller="Cart" asp-action="Index" class="btn btn-primary">
+                    Xem giỏ hàng
+                </a>
+                <a asp-controller="Order" asp-action="Checkout" class="btn btn-success">
+                    Thanh toán
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-3">
+                <i class="bi bi-cart-x display-4"></i>
+                <p class="mb-0">Giỏ hàng trống</p>
+            </div>
+        }
+    </div>
+</div>

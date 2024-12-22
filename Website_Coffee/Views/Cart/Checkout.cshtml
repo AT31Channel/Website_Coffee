@@ -1,0 +1,124 @@
+@model Website_Coffee.ViewModels.CheckoutViewModel
+
+@{
+    ViewData["Title"] = "Thanh toán";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">@ViewData["Title"]</h2>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Thông tin giao hàng</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Checkout" method="post" id="checkoutForm">
+                        @* Bỏ validation summary ở đây *@
+                        
+                        <div class="mb-3">
+                            <label asp-for="ShippingAddress" class="form-label">Địa chỉ giao hàng <span class="text-danger">*</span></label>
+                            <input asp-for="ShippingAddress" class="form-control" placeholder="Nhập địa chỉ giao hàng"/>
+                            <div class="invalid-feedback" id="shippingAddressError"></div>
+                            <span asp-validation-for="ShippingAddress" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PhoneNumber" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                            <input asp-for="PhoneNumber" class="form-control" placeholder="Nhập số điện thoại"/>
+                            <div class="invalid-feedback" id="phoneNumberError"></div>
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Note" class="form-label">Ghi chú</label>
+                            <textarea asp-for="Note" class="form-control" rows="3" placeholder="Nhập ghi chú nếu có"></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" id="submitButton">
+                                <i class="bi bi-bag-check me-2"></i>Đặt hàng
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Quay lại giỏ hàng
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Cart Summary -->
+            @await Html.PartialAsync("_CartSummary", Model)
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            // Reset form validation on page load
+            $('#checkoutForm').find('.is-invalid').removeClass('is-invalid');
+            $('.invalid-feedback').empty();
+            $('.text-danger').empty();
+
+            // Handle form submission
+            $('#checkoutForm').on('submit', function(e) {
+                e.preventDefault();
+                var isValid = true;
+                
+                // Reset validation state
+                $(this).find('.is-invalid').removeClass('is-invalid');
+                $('.invalid-feedback').empty();
+                
+                // Validate shipping address
+                var shippingAddress = $('#ShippingAddress').val().trim();
+                if (!shippingAddress) {
+                    $('#ShippingAddress').addClass('is-invalid');
+                    $('#shippingAddressError').text('Vui lòng nhập địa chỉ giao hàng');
+                    isValid = false;
+                }
+
+                // Validate phone number
+                var phoneNumber = $('#PhoneNumber').val().trim();
+                if (!phoneNumber) {
+                    $('#PhoneNumber').addClass('is-invalid');
+                    $('#phoneNumberError').text('Vui lòng nhập số điện thoại');
+                    isValid = false;
+                } else if (!/^\d{10}$/.test(phoneNumber)) {
+                    $('#PhoneNumber').addClass('is-invalid');
+                    $('#phoneNumberError').text('Số điện thoại phải có 10 chữ số');
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    // Disable submit button and show loading state
+                    $('#submitButton').prop('disabled', true)
+                        .html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xử lý...');
+                    
+                    // Submit form
+                    this.submit();
+                }
+            });
+
+            // Clear validation on input
+            $('input, textarea').on('input', function() {
+                $(this).removeClass('is-invalid');
+                $(this).siblings('.invalid-feedback').empty();
+                $(this).siblings('.text-danger').empty();
+            });
+        });
+    </script>
+}
